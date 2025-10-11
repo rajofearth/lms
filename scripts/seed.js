@@ -27,8 +27,10 @@ async function CategoriesGenerator() {
   ];
 
   for (const category of categories) {
-    await prisma.category.create({
-      data: category,
+    await prisma.category.upsert({
+      where: { title: category.title },
+      update: {},
+      create: category,
     });
   }
 
@@ -45,11 +47,11 @@ async function GoalsGenerator() {
     "Starting a Business",
   ];
 
-  for (const goal of goals) {
-    await prisma.goal.create({
-      data: {
-        title: goal,
-      },
+  for (const goalTitle of goals) {
+    await prisma.goal.upsert({
+      where: { title: goalTitle },
+      update: {},
+      create: { title: goalTitle },
     });
   }
 
