@@ -3,7 +3,6 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { fullChapterType, getChapterProgress, getFullChapter } from "../action";
-import { GiSpinningBlades } from "react-icons/gi";
 import PreviewForChapter from "./PreviewForChapter";
 import Loading from "@/components/Loading";
 import { SignInButton } from "@clerk/nextjs";
@@ -83,18 +82,7 @@ const RightPart = ({
               <Loading />
             </div>
           ) : fullChapter ? (
-            fullChapter.isFree ? (
-              <PreviewForChapter
-                courseId={courseId}
-                isAccessable={isAccessable}
-                visitedUser={visitedUser}
-                chapterId={chapterId}
-                fullChapter={fullChapter}
-                isCompleted={isCompleted}
-                setIsCompleted={setIsCompleted}
-                isAuther={isAuther}
-              />
-            ) : isAccessable || isAuther ? (
+            isAccessable || isAuther ? (
               <PreviewForChapter
                 courseId={courseId}
                 isAccessable={isAccessable}
@@ -107,9 +95,9 @@ const RightPart = ({
               />
             ) : !visitedUser ? (
               <div className="w-full h-[calc(100vh-90px)] flex flex-col gap-3 justify-center items-center font-bold text-xl">
-                You need to buy this course to access this chapter
+                You need to enroll in this course to access this chapter
                 <Link href={`/checkout?courseId=${courseId}`}>
-                  <Button>Buy Course</Button>
+                  <Button>Enroll Now</Button>
                 </Link>
               </div>
             ) : (

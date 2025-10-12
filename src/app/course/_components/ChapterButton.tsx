@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { FaLock } from "react-icons/fa";
-import { FaLockOpen } from "react-icons/fa";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { toast } from "sonner";
 
@@ -14,7 +13,6 @@ interface ChapterButtonProps {
   title: string;
   courseId: string;
   chapterId: string;
-  isFree: boolean;
   isAccessable: boolean;
   visitedUser: boolean;
   isSidebar: boolean;
@@ -25,7 +23,6 @@ const ChapterButton = ({
   isCompleted,
   title,
   chapterId,
-  isFree,
   isAccessable,
   visitedUser,
   isSidebar,
@@ -57,8 +54,6 @@ const ChapterButton = ({
           <IoMdCheckmarkCircleOutline className="text-lg sm:text-xl md:text-2xl" />
         ) : isAccessable ? (
           <Circle className="text-lg sm:text-xl md:text-2xl" />
-        ) : isFree ? (
-          <FaLockOpen className="text-lg sm:text-xl md:text-2xl" />
         ) : (
           <FaLock className="text-lg sm:text-xl md:text-2xl" />
         )}
@@ -80,8 +75,6 @@ const ChapterButton = ({
         <IoMdCheckmarkCircleOutline className="text-lg sm:text-xl md:text-2xl" />
       ) : isAccessable ? (
         <Circle className="text-lg sm:text-xl md:text-2xl" />
-      ) : isFree ? (
-        <FaLockOpen className="text-lg sm:text-xl md:text-2xl" />
       ) : (
         <FaLock className="text-lg sm:text-xl md:text-2xl" />
       )}

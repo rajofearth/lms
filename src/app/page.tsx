@@ -30,7 +30,7 @@ export default function Home() {
     {
       title: "Powerful Course Creation Tools",
       description:
-        "Teachers can create, plan, and publish courses with videos, attachments, and pricing options.",
+        "Teachers can create, plan, and publish courses with videos, attachments, and rich content.",
       icon: "🎨",
     },
     {
@@ -40,10 +40,10 @@ export default function Home() {
       icon: "📧",
     },
     {
-      title: "Flexible Course Pricing",
+      title: "Open Access Education",
       description:
-        "Offer free courses or set custom prices with integrated Razorpay payment processing.",
-      icon: "💰",
+        "All courses are freely accessible to registered users. Learn and grow without barriers.",
+      icon: "🌐",
     },
     {
       title: "Verifiable Certificates",
@@ -158,9 +158,8 @@ export default function Home() {
             <div className="bg-gray-800 rounded-lg p-8 shadow-xl">
               <p className="text-lg text-gray-300 mb-4">
                 &quot;YourLMS has transformed the way I create and manage my
-                online courses. The course studio is intuitive, and the
-                integrated payment system makes it easy to monetize my
-                expertise.&quot;
+                online courses. The course studio is intuitive, and I love how
+                easy it is to share knowledge with learners around the world.&quot;
               </p>
               <p className="text-blue-400 font-semibold">
                 - Dr. J. Manoj Kumar, Online Instructor

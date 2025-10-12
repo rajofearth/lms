@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 
 import { z } from "zod";
 import { thumbnailSchema } from "@/schema/zod-schemes";
@@ -48,9 +49,11 @@ const ThumbnailField = ({ courseId, thumbnail }: ThumbnailFieldProps) => {
           <p className="text-gray-500">No thumbnail uploaded</p>
         </div>
       ) : (
-        <img
+        <Image
           src={thumbnail}
           alt="thumbnail"
+          width={1200}
+          height={675}
           className="object-cover w-full max-h-90 rounded-md"
         />
       )}

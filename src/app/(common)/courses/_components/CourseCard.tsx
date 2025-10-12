@@ -1,17 +1,17 @@
-import { currencyFormater } from "@/lib/utils";
 import { Course, User } from "@prisma/client";
 import { BookOpenCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { courseAccess, getTotalCourseProgress } from "../actions";
-import { GiPayMoney, GiReceiveMoney } from "react-icons/gi";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+
 interface CourseCardProps {
   course: Course & { chapters: number; user: User };
   chapterId: string;
 }
+
 const CourseCard = ({ course, chapterId }: CourseCardProps) => {
   const [visitedUser, setVisitedUser] = React.useState(false);
   const [isCourseAccessableByTheUser, setIsCourseAccessableByTheUser] =
@@ -30,9 +30,8 @@ const CourseCard = ({ course, chapterId }: CourseCardProps) => {
 
   return (
     <Link
-      // href={`/course/${course.id}?chapter=${chapterId}`}
       href={`/preview?courseId=${course.id}`}
-      className="shadow-md rounded-md border flex flex-col cursor-pointer"
+      className="shadow-md rounded-md border flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
     >
       <Image
         src={course.thumbnail!}
@@ -46,16 +45,8 @@ const CourseCard = ({ course, chapterId }: CourseCardProps) => {
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <BookOpenCheck />
-            <span>{course.chapters}</span>
+            <span>{course.chapters} chapters</span>
           </div>
-          <p>₹{currencyFormater(Number(course.price))}</p>
-
-          {!visitedUser &&
-            (isCourseAccessableByTheUser ? (
-              <GiReceiveMoney size={30} />
-            ) : (
-              <GiPayMoney size={30} />
-            ))}
         </div>
         {isCourseAccessableByTheUser && <Progress value={value} />}
         <Link href={`/profile/${course.user.id}`} className="w-full mt-3">

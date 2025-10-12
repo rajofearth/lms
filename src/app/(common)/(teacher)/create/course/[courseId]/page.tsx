@@ -6,7 +6,6 @@ import TitleField from "./_components/TitleField";
 import DescriptionField from "./_components/DescriptionField";
 import ThumbnailField from "./_components/ThumbnailField";
 import CategoryField from "./_components/CategoryField";
-import CourseFreeField from "./_components/CourseFreeField";
 import ChaptersField from "./_components/ChaptersField";
 import Banner from "@/components/Banner";
 import PublishField from "./_components/PublishField";
@@ -62,7 +61,6 @@ const page = async ({ params }: { params: { courseId: string } }) => {
     courseDetails.description,
     courseDetails.thumbnail,
     courseDetails.category?.title,
-    courseDetails.isFree || courseDetails?.price,
     courseDetails.chapters.some((chapter) => chapter.isPublished),
   ];
 
@@ -117,11 +115,6 @@ const page = async ({ params }: { params: { courseId: string } }) => {
             />
             <DurationField
               duration={courseDetails.duration}
-              courseId={params.courseId}
-            />
-            <CourseFreeField
-              isFree={courseDetails.isFree}
-              price={courseDetails.price || 0}
               courseId={params.courseId}
             />
           </div>

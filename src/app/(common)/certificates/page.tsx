@@ -30,8 +30,6 @@ const page = async () => {
               title: true,
               thumbnail: true,
               duration: true,
-              isFree: true,
-              price: true,
               category: {
                 select: {
                   title: true,

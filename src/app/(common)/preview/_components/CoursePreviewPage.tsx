@@ -19,11 +19,11 @@ const CoursePreviewPage = ({
 
   const onEnroll = (type: "CHECKOUT" | "CONTINUE") => {
     if (type === "CHECKOUT") {
-      toast.loading("Please wait redirecting to checkout page...", {
+      toast.loading("Please wait redirecting to enrollment page...", {
         id: "loading-1",
       });
       router.push(`/checkout?courseId=${course.id}`);
-      toast.success("Redirected to checkout page", {
+      toast.success("Redirected to enrollment page", {
         id: "loading-1",
       });
     } else {
@@ -74,11 +74,6 @@ const CoursePreviewPage = ({
               <li key={chapter.id} className="flex items-center">
                 <Book className="mr-2" size={16} />
                 <span>{chapter.title}</span>
-                {chapter.isFree && (
-                  <span className="ml-2 text-xs bg-foreground text-background px-2 py-1 rounded">
-                    Free
-                  </span>
-                )}
               </li>
             ))}
           </ul>
@@ -140,8 +135,7 @@ const CoursePreviewPage = ({
                 onEnroll("CHECKOUT");
               }}
             >
-              Enroll
-              {course.isFree ? " for Free" : ` - ₹${course.price}`}
+              Enroll Now
             </Button>
           )}
         </div>

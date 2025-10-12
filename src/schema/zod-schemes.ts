@@ -35,10 +35,7 @@ export const categorySchema = z.object({
   }),
 });
 
-export const isFreeSchema = z.object({
-  isFree: z.boolean(),
-  price: z.number(),
-});
+// Pricing removed: courses are always free
 
 export const contentSchema = z.object({
   content: z.string().min(50, {

@@ -58,7 +58,6 @@
     "nextjs-toploader": "^1.6.12",
     "nodemailer": "^6.9.14",
     "quill": "^2.0.2",
-    "razorpay": "^2.9.4",
     "react": "^18",
     "react-dom": "^18",
     "react-email": "2.1.5",

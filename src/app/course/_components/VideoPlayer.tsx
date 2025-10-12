@@ -18,7 +18,7 @@ const VideoPlayer = ({ videoUrl, courseId }: VideoPlayerProps) => {
       setCourseDetails(course);
     };
     getCourseDeatils();
-  }, [videoUrl]);
+  }, [courseId]);
   const nextVideo = async () => {};
   return (
     <Player

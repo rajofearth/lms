@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Role, User } from "@prisma/client";
@@ -190,10 +191,12 @@ const SettingsField = ({ user }: SettingsFieldProps) => {
                     setSignature("");
                   }}
                 >
-                  <img
+                  <Image
                     src={signature}
                     alt="signature"
-                    className="h-44 object-cover"
+                    width={600}
+                    height={200}
+                    className="h-44 object-cover w-auto"
                   />
                 </div>
               ) : (

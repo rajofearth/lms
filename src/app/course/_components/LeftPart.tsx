@@ -72,7 +72,6 @@ const LeftPart = async ({
               chapterId={chapter.id}
               isCompleted={isCompleted}
               title={chapter.title}
-              isFree={chapter.isFree}
               visitedUser={visitedUser}
               isAccessable={isAccessable}
               isSidebar={isSidebar}

@@ -21,20 +21,6 @@ export const columns: ColumnDef<TeachersPublishedCoursesType>[] = [
     },
   },
   {
-    accessorKey: "price",
-    header: ({ column }) => {
-      return (
-        <div
-          className="flex items-center cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Price
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "category",
     header: "Category",
     cell: ({ row: { original } }) => {
@@ -46,13 +32,6 @@ export const columns: ColumnDef<TeachersPublishedCoursesType>[] = [
     header: "Published",
     cell: ({ row: { original } }) => {
       return original.isPublished ? "Published" : "UnPublished";
-    },
-  },
-  {
-    accessorKey: "isFree",
-    header: "Free",
-    cell: ({ row: { original } }) => {
-      return original.isFree ? "Free" : "Paid";
     },
   },
   {

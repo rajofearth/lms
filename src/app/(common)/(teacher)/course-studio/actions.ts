@@ -32,10 +32,8 @@ export const getTeacherPublichedCourses = async () => {
       },
       id: true,
       title: true,
-      price: true,
       isPublished: true,
       category: true,
-      isFree: true,
     },
     orderBy: {
       createdAt: "desc",

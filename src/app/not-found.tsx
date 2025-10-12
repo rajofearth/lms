@@ -1,6 +1,7 @@
 import React from "react";
 import "./custom.css";
 import Link from "next/link";
+import Image from "next/image";
 // <section className="page_404 h-screen">
 //   <div className="container">
 //     <div className="row">
@@ -35,9 +36,12 @@ const NotFound = () => {
         small typo when entering the address. Go to the main page.
       </p>
       <div className="bl_page404__wrapper">
-        <img
+        <Image
           src="https://github.com/BlackStar1991/Pictures-for-sharing-/blob/master/404/bigBoom/cloud_warmcasino.png?raw=true"
           alt="cloud_warmcasino.png"
+          width={800}
+          height={600}
+          className="h-auto w-auto"
         />
         <div className="bl_page404__el1"></div>
         <div className="bl_page404__el2"></div>

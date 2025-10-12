@@ -127,9 +127,7 @@ const ProfilePage = async ({ params }: { params: { profileId: string } }) => {
                               ? "1 student"
                               : `${course.accesses.length} students`}
                           </Badge>
-                          <Badge variant="default">
-                            {course.isFree ? "Free" : "Paid"}
-                          </Badge>
+                          <Badge variant="default">Free</Badge>
                         </div>
                       </div>
                     </Link>

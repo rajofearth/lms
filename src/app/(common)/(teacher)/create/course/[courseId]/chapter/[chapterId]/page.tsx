@@ -4,10 +4,8 @@ import { redirect } from "next/navigation";
 import React from "react";
 import TitleField from "./_components/TitleField";
 import ContentField from "./_components/ContentField";
-import ChapterAccessField from "./_components/ChapterAccessField";
 import VideoField from "./_components/VideoField";
 import Banner from "@/components/Banner";
-
 import PublishField from "./_components/PublishField";
 import BackField from "./_components/BackField";
 import AttachmentsField from "./_components/AttachmentsField";
@@ -79,11 +77,6 @@ const page = async ({
             />
           </div>
           <div className="space-y-4 w-full">
-            <ChapterAccessField
-              isFree={chapterDeatils.isFree || false}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
-            />
             <AttachmentsField
               attachments={chapterDeatils.attachments || []}
               courseId={params.courseId}

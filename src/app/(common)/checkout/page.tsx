@@ -3,10 +3,10 @@ import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
-import { FaBook, FaGraduationCap, FaClock, FaLock } from "react-icons/fa";
-import RightPart from "./_components/RightPart";
+import { FaBook, FaGraduationCap, FaClock } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import EnrollmentForm from "./_components/EnrollmentForm";
 
 const CheckoutPage = async ({
   searchParams,
@@ -18,7 +18,15 @@ const CheckoutPage = async ({
     redirect("/");
   }
 
-  let isAuthor = false;
+  const user = await prisma.user.findUnique({
+    where: {
+      authId: userId,
+    },
+  });
+
+  if (!user) {
+    redirect("/");
+  }
 
   const course = await prisma.course.findUnique({
     where: {
@@ -58,13 +66,28 @@ const CheckoutPage = async ({
       </div>
     );
   }
-  if (course.user.authId === userId) {
-    isAuthor = true;
+
+  const isAuthor = course.user.authId === userId;
+
+  // Check if already enrolled
+  const existingAccess = await prisma.access.findFirst({
+    where: {
+      userId: user.id,
+      courseId: course.id,
+    },
+  });
+
+  if (existingAccess) {
+    redirect(`/course/${course.id}`);
+  }
+
+  if (isAuthor) {
+    redirect(`/course/${course.id}`);
   }
 
   return (
-    <div className="w-full min-h-screen   flex flex-col lg:items-center lg:justify-center p-4 overflow-y-scroll">
-      <div className="max-w-6xl w-full bg-white dark:bg-gray-900 rounded-lg shadow-xl  flex flex-col md:flex-row">
+    <div className="w-full min-h-screen flex flex-col lg:items-center lg:justify-center p-4 overflow-y-scroll">
+      <div className="max-w-6xl w-full bg-white dark:bg-gray-900 rounded-lg shadow-xl flex flex-col md:flex-row">
         {/* Left side - Course Information */}
         <div className="md:w-1/2 bg-indigo-600 text-white">
           <div className="relative w-full h-60">
@@ -77,7 +100,7 @@ const CheckoutPage = async ({
             />
           </div>
           <div className="p-8">
-            <h1 className="text-3xl font-bold mb-4">Complete Your Purchase</h1>
+            <h1 className="text-3xl font-bold mb-4">Enroll in Course</h1>
             <h2 className="text-2xl font-semibold mb-6">{course.title}</h2>
             <div className="mb-4 flex items-center">
               <FaGraduationCap className="mr-2" />
@@ -98,12 +121,8 @@ const CheckoutPage = async ({
           </div>
         </div>
 
-        {/* Right side - Payment Information */}
-        <RightPart
-          price={course.price || 0}
-          courseId={course.id}
-          isAuthor={isAuthor}
-        />
+        {/* Right side - Enrollment Form */}
+        <EnrollmentForm courseId={course.id} courseName={course.title} />
       </div>
     </div>
   );

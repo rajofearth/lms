@@ -34,7 +34,6 @@ const Page = async ({
       chapters: {
         select: {
           title: true,
-          isFree: true,
           id: true,
         },
       },

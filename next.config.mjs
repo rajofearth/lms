@@ -14,6 +14,12 @@ const nextConfig = {
       {
         hostname: "assets.aceternity.com",
       },
+      {
+        hostname: "github.com",
+      },
+      {
+        hostname: "avatar.vercel.sh",
+      },
     ],
   },
 };
