@@ -1,34 +1,42 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { ModifiedCourseType, getCourses } from "../actions";
 import CourseCard from "./CourseCard";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const Courses = () => {
-  const [loading, setLoading] = useState(true);
-  const [courses, setCourses] = useState<ModifiedCourseType[]>([]);
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search") || "";
+interface CoursesProps {
+  initialCourses: ModifiedCourseType[];
+  search: string;
+}
 
-  const fetchCourses = useCallback(async () => {
+const Courses = memo(({ initialCourses, search }: CoursesProps) => {
+  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState<ModifiedCourseType[]>(initialCourses);
+  const searchParams = useSearchParams();
+  const currentSearch = searchParams.get("search") || "";
+
+  const fetchCourses = useCallback(async (searchTerm: string) => {
     setLoading(true);
     try {
-      const results = await getCourses(search);
+      const results = await getCourses(searchTerm);
       setCourses(results);
     } catch (error) {
       console.error("Error fetching courses:", error);
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, []);
 
   useEffect(() => {
-    const timer = setTimeout(fetchCourses, 300);
-    return () => clearTimeout(timer);
-  }, [fetchCourses]);
+    // Only fetch if search term has changed
+    if (currentSearch !== search) {
+      const timer = setTimeout(() => fetchCourses(currentSearch), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [currentSearch, search, fetchCourses]);
 
   if (loading) {
     return <SkeletonLoader />;
@@ -53,9 +61,9 @@ const Courses = () => {
       ))}
     </div>
   );
-};
+});
 
-const SkeletonLoader = () => {
+const SkeletonLoader = memo(() => {
   const skeletons = Array(10).fill(null);
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -73,6 +81,9 @@ const SkeletonLoader = () => {
       ))}
     </div>
   );
-};
+});
+
+SkeletonLoader.displayName = "SkeletonLoader";
+Courses.displayName = "Courses";
 
 export default Courses;

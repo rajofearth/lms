@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { chapterId: string } }
+  { params }: { params: Promise<{ chapterId: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -16,7 +16,9 @@ export async function POST(
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!params.chapterId) {
+    
+    const { chapterId } = await params;
+    if (!chapterId) {
       return NextResponse.json(
         { message: "chapterID is required" },
         { status: 400 }
@@ -37,7 +39,7 @@ export async function POST(
     const chapter = await prisma.progress.upsert({
       where: {
         userId_chapterId: {
-          chapterId: params.chapterId,
+          chapterId: chapterId,
           userId: user.id,
         },
       },
@@ -45,7 +47,7 @@ export async function POST(
         status: value.completed ? "COMPLETED" : "IN_PROGRESS",
       },
       create: {
-        chapterId: params.chapterId,
+        chapterId: chapterId,
         userId: user.id,
         status: value.completed ? "COMPLETED" : "IN_PROGRESS",
       },

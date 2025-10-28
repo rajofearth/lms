@@ -37,16 +37,18 @@ export const onboarding = async () => {
       },
     });
 
+    const htmlContent = await render(
+      WelcomeToLMS({
+        name: user?.name || user.email.split("@")[0],
+        role: "TEACHER",
+      })
+    );
+
     const mailOptions = {
       from: process.env.MAIL_USER,
       to: user.email,
       subject: "Welcome To YourLMS Portal (Role Change)",
-      html: render(
-        WelcomeToLMS({
-          name: user?.name || user.email.split("@")[0],
-          role: "TEACHER",
-        })
-      ),
+      html: htmlContent,
     };
 
     transport.sendMail(mailOptions, function (error, info) {

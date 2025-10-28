@@ -41,8 +41,8 @@ const Certificate: React.FC<CertificateProps> = ({
 
   useEffect(() => {
     const loadImage = (src: string) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
+      return new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = document.createElement('img');
         img.onload = () => resolve(img);
         img.onerror = reject;
         img.src = src;
@@ -55,7 +55,7 @@ const Certificate: React.FC<CertificateProps> = ({
   }, [instructorSignature, directorSignature]);
 
   const handlePrint = useReactToPrint({
-    content: () => certificateRef.current,
+    contentRef: certificateRef,
   });
 
   const generatePDF = async () => {

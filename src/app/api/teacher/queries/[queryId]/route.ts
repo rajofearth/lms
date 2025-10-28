@@ -5,10 +5,11 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { queryId: string } }
+  { params }: { params: Promise<{ queryId: string }> }
 ) {
   try {
-    if (!params.queryId) {
+    const { queryId } = await params;
+    if (!queryId) {
       return NextResponse.json(
         { message: "QueryId is required" },
         { status: 400 }
@@ -35,7 +36,7 @@ export async function PUT(
 
     await prisma.requests.update({
       where: {
-        id: params.queryId,
+        id: queryId,
       },
       data: {
         status: value.status === "COMPLETED" ? "IN_PROGRESS" : "COMPLETED",

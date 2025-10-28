@@ -28,7 +28,7 @@ const DurationField = ({ courseId, duration }: DurationFieldProps) => {
   const form = useForm<z.infer<typeof durationSchema>>({
     resolver: zodResolver(durationSchema),
     defaultValues: {
-      duration,
+      duration: Number(duration),
     },
   });
   const {
@@ -65,8 +65,9 @@ const DurationField = ({ courseId, duration }: DurationFieldProps) => {
                     <Input
                       placeholder="e.g. 10"
                       {...field}
-                      value={field.value}
+                      value={field.value || ""}
                       type="number"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>
                   <FormDescription>
