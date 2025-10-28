@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import CourseCard from "./_components/CourseCard";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

@@ -4,6 +4,7 @@ import Certificates from "./_components/Certificates";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const page = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -14,7 +15,7 @@ const page = async () => {
       <div className="h-[calc(100vh-100px)] w-full flex flex-col justify-center items-center gap-3">
         Sign in to view your certificates
         <Button asChild>
-          <a href="/auth/sign-in">Sign in</a>
+          <Link href="/auth/sign-in">Sign in</Link>
         </Button>
       </div>
     );

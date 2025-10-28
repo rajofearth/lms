@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { fullChapterType, getChapterProgress, getFullChapter } from "../action";
 import PreviewForChapter from "./PreviewForChapter";
 import Loading from "@/components/Loading";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";

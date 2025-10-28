@@ -1,10 +1,15 @@
 import { prisma } from "@/lib/db";
 import Categories from "./_components/Categories";
 import Courses from "./_components/Courses";
-import { Input } from "@/components/ui/input";
 import SearchInput from "./_components/SearchInput";
 
-const page = async ({ searchParams }: { searchParams: { search: string } }) => {
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) => {
+  const params = await searchParams;
+  const search = params?.search ?? "";
   const cats = await prisma.category.findMany();
   return (
     <div className="p-4  min-h-[calc(100vh-100px)] overflow-y-auto">
@@ -20,7 +25,7 @@ const page = async ({ searchParams }: { searchParams: { search: string } }) => {
         </div>
       </div>
       <div className="w-full mb-4">
-        <Categories categories={cats} search={searchParams.search} />
+        <Categories categories={cats} search={search} />
       </div>
       <Courses />
     </div>

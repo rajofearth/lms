@@ -4,7 +4,6 @@ import ChapterBanner from "./ChapterBanner";
 import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Link from "next/link";
 import Preview from "@/components/Preview";
 import { cn, updateTheField } from "@/lib/utils";
 interface RightPartProps {

@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import SettingsField from "./_components/SettingsField";
+import Link from "next/link";
 
 const page = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -13,7 +14,7 @@ const page = async () => {
       <div className="h-[calc(100vh-100px)] w-full flex flex-col justify-center items-center gap-3">
         Sign in to view your settings
         <Button asChild>
-          <a href="/auth/sign-in">Sign in</a>
+          <Link href="/auth/sign-in">Sign in</Link>
         </Button>
       </div>
     );

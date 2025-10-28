@@ -65,14 +65,14 @@ export default function Home() {
         <GridPattern>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="flex justify-center">
-              <p className="font-display text-5xl font-bold tracking-[-0.02em] text-white sm:text-6xl md:text-7xl mb-6 text-center max-w-4xl">
+              <h1 className="font-display text-5xl font-bold tracking-[-0.02em] text-white sm:text-6xl md:text-7xl mb-6 text-center max-w-4xl">
                 <SparklesText
                   text="YourLMS"
                   className="inline-block mr-2 text-white"
                 />
                 <br />
                 Redefining Education for the Connected World
-              </p>
+              </h1>
             </div>
             <p className="mt-6 text-xl  max-w-3xl mx-auto">
               <TextGenerateEffect words={text} />

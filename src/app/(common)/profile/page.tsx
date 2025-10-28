@@ -20,7 +20,7 @@ const ProfilePage = async () => {
       <div className="h-[calc(100vh-100px)] w-full flex flex-col justify-center items-center gap-3 p-4 text-center">
         <p className="text-lg">Sign in to view your profile</p>
         <Button asChild>
-          <a href="/auth/sign-in">Sign in</a>
+          <Link href="/auth/sign-in">Sign in</Link>
         </Button>
       </div>
     );

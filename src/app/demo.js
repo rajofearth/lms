@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
 const Navbar = () => (
