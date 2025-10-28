@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { ClientUploadedFileData } from "uploadthing/types";
 
@@ -15,7 +16,11 @@ export async function DELETE(
       );
     }
 
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -44,7 +49,11 @@ export async function PATCH(
   { params }: { params: { courseId: string; chapterId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -96,7 +105,11 @@ export async function POST(
         { status: 400 }
       );
     }
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -141,7 +154,11 @@ export async function PUT(
         { status: 400 }
       );
     }
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

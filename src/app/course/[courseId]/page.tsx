@@ -6,8 +6,9 @@ import MobileLeftPart from "../_components/MobileLeftPart";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 
-const Page = async ({ params }: { params: { courseId: string } }) => {
-  const courseId = params.courseId;
+const Page = async ({ params }: { params: Promise<{ courseId: string }> }) => {
+  const resolvedParams = await params;
+  const courseId = resolvedParams.courseId;
 
   if (!courseId) {
     redirect("/not-found");

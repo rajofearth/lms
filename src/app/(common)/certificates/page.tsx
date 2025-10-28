@@ -1,27 +1,26 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Certificates from "./_components/Certificates";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
 
 const page = async () => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
 
   if (!userId)
     return (
       <div className="h-[calc(100vh-100px)] w-full flex flex-col justify-center items-center gap-3">
         Sign in to view your certificates
-        <Button>
-          <SignInButton mode="redirect" forceRedirectUrl="/certificates" />
+        <Button asChild>
+          <a href="/auth/sign-in">Sign in</a>
         </Button>
       </div>
     );
 
   const user = await prisma.user.findUnique({
-    where: {
-      authId: userId,
-    },
+    where: { id: userId },
     include: {
       certificates: {
         include: {

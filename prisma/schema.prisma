@@ -7,54 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  STUDENT
-  TEACHER
-}
-
 model User {
-  id           String           @id @default(uuid())
-  email        String           @unique
-  name         String?
-  role         Role             @default(STUDENT)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  authId       String           @unique
-  onBoarded    Boolean          @default(false)
-  profilePic   String?
-  bio          String?
-  signature    String?
-  courses      Course[]
-  progress     progress[]
-  accesses     Access[]
-  requests     requests[]
-  categories   UserCategory[]
-  goals        UserGoal[]
-  purchases    purchases[]
-  mail         MailCredentials?
-  certificates Certificate[]
-
-  @@unique([id, authId])
+  id            String           @id @default(uuid())
+  email         String           @unique
+  emailVerified DateTime?
+  name          String?
+  password      String?
+  image         String?
+  role          Role             @default(STUDENT)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  onBoarded     Boolean          @default(false)
+  profilePic    String?
+  bio           String?
+  signature     String?
+  accesses      Access[]
+  accounts      Account[]
+  certificates  Certificate[]
+  courses       Course[]
+  mail          MailCredentials?
+  sessions      Session[]
+  categories    UserCategory[]
+  goals         UserGoal[]
+  progress      progress[]
+  purchases     purchases[]
+  requests      requests[]
 }
 
 model MailCredentials {
   id        String   @id @default(uuid())
   email     String
   pass      String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([userId])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Goal {
   id        String     @id @default(uuid())
   title     String     @unique
-  users     UserGoal[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  users     UserGoal[]
 
   @@unique([id, title])
 }
@@ -64,8 +59,8 @@ model Category {
   title     String         @unique
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  users     UserCategory[]
   courses   Course[]
+  users     UserCategory[]
 
   @@unique([id, title])
 }
@@ -73,8 +68,8 @@ model Category {
 model UserCategory {
   userId     String
   categoryId String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, categoryId])
 }
@@ -82,111 +77,91 @@ model UserCategory {
 model UserGoal {
   userId String
   goalId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal   Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, goalId])
 }
 
 model Course {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  thumbnail   String?
-  isPublished Boolean   @default(false)
-  categoryid  String?
-  duration    Int       @default(5)
-  category    Category? @relation(fields: [categoryid], references: [id])
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  chapters     Chapter[]
-  accesses     Access[]
-  purchases    purchases[]
-  certificates Certificate[]
+  id           String        @id @default(uuid())
+  title        String
+  description  String?
+  thumbnail    String?
+  isPublished  Boolean       @default(false)
+  categoryid   String?
+  duration     Int           @default(5)
+  userId       String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-}
-
-enum PurchaseStatusEnum {
-  COMPLETED
-  IN_PROGRESS
-  FAILED
+  accesses     Access[]
+  certificates Certificate[]
+  chapters     Chapter[]
+  category     Category?     @relation(fields: [categoryid], references: [id])
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purchases    purchases[]
 }
 
 model purchases {
   id        String             @id @default(uuid())
   status    PurchaseStatusEnum @default(IN_PROGRESS)
   courseId  String
-  course    Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
   userId    String
-  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
+  course    Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Access {
   id        String   @id @default(uuid())
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, userId])
 }
 
 model Chapter {
-  id          String  @id @default(uuid())
+  id          String       @id @default(uuid())
   title       String
   content     String?
   order       Int?
   videoUrl    String?
-  isPublished Boolean @default(false)
-
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
+  isPublished Boolean      @default(false)
+  courseId    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   attachments attachment[]
   progress    progress[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model attachment {
-  id   String @id @default(uuid())
-  name String
-  url  String
-  type String
-
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  type      String
   chapterId String
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
 model progress {
-  id     String @id @default(uuid())
-  status Status @default(IN_PROGRESS)
-
+  id        String   @id @default(uuid())
+  status    Status   @default(IN_PROGRESS)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
+  userId    String
   chapterId String
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, chapterId])
-}
-
-enum Status {
-  COMPLETED
-  IN_PROGRESS
 }
 
 model requests {
@@ -196,20 +171,76 @@ model requests {
   message   String
   userId    String
   status    Status   @default(IN_PROGRESS)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Certificate {
   id        String   @id @default(uuid())
   title     String
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([courseId, userId])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id           String    @id @default(uuid())
+  userId       String
+  accountId    String
+  providerId   String
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  expiresAt    DateTime?
+  password     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+enum PurchaseStatusEnum {
+  COMPLETED
+  IN_PROGRESS
+  FAILED
+}
+
+enum Status {
+  COMPLETED
+  IN_PROGRESS
 }

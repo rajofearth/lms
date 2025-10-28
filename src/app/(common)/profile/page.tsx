@@ -7,27 +7,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Target, Folder } from "lucide-react";
 import { FaCertificate } from "react-icons/fa";
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
 
 const ProfilePage = async () => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
 
   if (!userId)
     return (
       <div className="h-[calc(100vh-100px)] w-full flex flex-col justify-center items-center gap-3 p-4 text-center">
         <p className="text-lg">Sign in to view your profile</p>
-        <Button>
-          <SignInButton mode="redirect" forceRedirectUrl="/profile" />
+        <Button asChild>
+          <a href="/auth/sign-in">Sign in</a>
         </Button>
       </div>
     );
 
   const user = await prisma.user.findUnique({
-    where: {
-      authId: userId,
-    },
+    where: { id: userId },
     include: {
       courses: {
         include: {

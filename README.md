@@ -1,7 +1,7 @@
 
 # YourLMS - Advanced Learning Management System
 
-Welcome to YourLMS! This repository contains the code for a comprehensive Learning Management System built with Next.js, Tailwind CSS, Shadcn UI, React Video, Prisma ORM, PostgreSQL, and Clerk.
+Welcome to YourLMS! This repository contains the code for a comprehensive Learning Management System built with Next.js, Tailwind CSS, Shadcn UI, React Video, Prisma ORM, PostgreSQL, and Better Auth.
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -28,7 +28,7 @@ YourLMS is designed to provide a seamless learning experience for both teachers 
 - Publish chapters with videos, attachments, and explanations in Markdown format
 
 ### Payment Integration
-- Razorpay integration for secure course payments
+- DodoPayments integration coming soon (placeholder pages are present under checkout)
 
 ### Search Functionality
 - Search courses by teacher name, title, or category (e.g., web development, mobile development)
@@ -70,8 +70,7 @@ YourLMS is designed to provide a seamless learning experience for both teachers 
 - **React Video** ![React Video](https://img.shields.io/badge/React_Video-61DAFB?style=flat&logo=react&logoColor=white)
 - **Prisma ORM** ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white)
 - **PostgreSQL** ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)
-- **Clerk** ![Clerk](https://img.shields.io/badge/Clerk-3E70F7?style=flat)
-- **Razorpay** ![Razorpay](https://img.shields.io/badge/Razorpay-02042B?style=flat&logo=razorpay&logoColor=white)
+- **Better Auth**
 
 ## Installation
 

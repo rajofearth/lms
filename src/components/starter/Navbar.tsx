@@ -1,7 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import { CoolMode } from "../magicui/cool-mode";
-import { ClerkLoaded, ClerkLoading, SignInButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const links = [
@@ -35,16 +34,11 @@ const Navbar = () => {
         </div>
         <div className="flex">
           <CoolMode>
-            <button className="bg-blue-500 rounded-lg  hover:text-white px-3 py-2 text-sm font-bold animate-pulse">
-              <ClerkLoaded>
-                <SignInButton forceRedirectUrl="/onboarding" mode="redirect">
-                  <p className="hover:scale-120 hover:font-bold ">
-                    Start Learning
-                  </p>
-                </SignInButton>
-              </ClerkLoaded>
-              <ClerkLoading>loading...</ClerkLoading>
-            </button>
+            <Link href="/auth/sign-in" className="bg-blue-500 rounded-lg hover:text-white px-3 py-2 text-sm font-bold animate-pulse">
+              <p className="hover:scale-120 hover:font-bold">
+                Start Learning
+              </p>
+            </Link>
           </CoolMode>
         </div>
       </div>

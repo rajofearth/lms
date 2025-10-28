@@ -1,13 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import CourseCompletionEmail from "../../../../emails/CourseCompletionEmail";
 
 export const courseAccess = async (courseId: string) => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   let visitedUser = false;
   if (!userId) visitedUser = true;
   let isCourseAccessableByTheUser = false;
@@ -25,7 +30,7 @@ export const courseAccess = async (courseId: string) => {
     return { visitedUser, isCourseAccessableByTheUser, isauther };
   }
 
-  if (course.user.authId === userId) {
+  if (course.user.id === userId) {
     isauther = true;
     visitedUser = false;
     return { visitedUser, isCourseAccessableByTheUser, isauther };
@@ -33,7 +38,7 @@ export const courseAccess = async (courseId: string) => {
   if (userId) {
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
     if (user) {
@@ -91,14 +96,18 @@ export const getCourses = async (word: string, page = 1, pageSize = 20) => {
 };
 
 export const getTotalCourseProgress = async (courseId: string) => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     return 0;
   }
 
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
 

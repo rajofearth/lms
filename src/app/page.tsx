@@ -1,7 +1,7 @@
 "use client";
 import GridPattern from "@/components/GridPattern";
 import Link from "next/link";
-import { SignUpButton, useAuth } from "@clerk/nextjs";
+import { useSession, signIn } from "@/lib/auth-client";
 import SparklesText from "@/components/magicui/sparkles-text";
 import { MagicCard } from "@/components/magicui/magic-card";
 import AnimatedShinyText from "@/components/magicui/animated-shiny-text";
@@ -53,7 +53,7 @@ export default function Home() {
     },
   ];
 
-  const { isSignedIn } = useAuth();
+  const { data: session } = useSession();
 
   const text = `Empower educators and learners with our innovative learning management system. Experience the future of education with YourLMS's cutting-edge platform.`;
 
@@ -85,15 +85,12 @@ export default function Home() {
                   )}
                 >
                   <AnimatedShinyText className="inline-flex items-center justify-center px-6 py-3 transition ease-out hover:duration-300 hover:text-neutral-400">
-                    {isSignedIn ? (
+                    {session?.user ? (
                       <Link href="/dashboard">✨ Go to Dashboard</Link>
                     ) : (
-                      <SignUpButton
-                        forceRedirectUrl="/onboarding"
-                        mode="redirect"
-                      >
+                      <button onClick={() => signIn.email({ email: "", password: "" })}>
                         ✨ Start Your Learning Journey
-                      </SignUpButton>
+                      </button>
                     )}
                     <ArrowRightIcon className="ml-2 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
                   </AnimatedShinyText>
@@ -197,15 +194,12 @@ export default function Home() {
                 )}
               >
                 <AnimatedShinyText className="inline-flex items-center justify-center px-8 py-4 text-xl transition ease-out hover:duration-300 hover:text-neutral-400">
-                  {isSignedIn ? (
+                  {session?.user ? (
                     <Link href="/dashboard">✨ Access Your Courses</Link>
                   ) : (
-                    <SignUpButton
-                      forceRedirectUrl="/onboarding"
-                      mode="redirect"
-                    >
+                    <button onClick={() => signIn.email({ email: "", password: "" })}>
                       ✨ Join YourLMS Today
-                    </SignUpButton>
+                    </button>
                   )}
                   <ArrowRightIcon className="ml-2 size-5 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
                 </AnimatedShinyText>

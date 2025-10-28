@@ -102,6 +102,12 @@ const EnrollmentForm: React.FC<EnrollmentFormProps> = ({
           </li>
         </ul>
       </div>
+
+      <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center">
+        Payments with DodoPayments are coming soon. For now, enrollment does not require payment.
+        <br />
+        <a href="/checkout/start" className="underline">Learn more</a>
+      </div>
     </div>
   );
 };

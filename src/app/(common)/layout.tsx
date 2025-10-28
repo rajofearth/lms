@@ -2,7 +2,8 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import SidebarWraper from "@/components/SidebarWraper";
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import React from "react";
@@ -10,11 +11,17 @@ import React from "react";
 const layout = async ({ children }: { children: React.ReactNode }) => {
   let isTeacher = false;
   let visitedUser = false;
-  const { userId } = auth();
+  
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
+  
   if (userId) {
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
 

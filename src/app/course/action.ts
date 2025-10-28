@@ -1,15 +1,20 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const getProgressWithIds = async (courseId: string) => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     return [];
   }
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
 
@@ -55,13 +60,17 @@ export const getProgressWithIds = async (courseId: string) => {
 };
 
 export const getChapterProgress = async (chapterId: string) => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     return false;
   }
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
   if (!user) {

@@ -1,9 +1,6 @@
 "use client";
-import { SignInButton, UserButton } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
+import { useSession, signOut } from "@/lib/auth-client";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { useTheme } from "next-themes";
-import { dark } from "@clerk/themes";
 import { usePathname, useRouter } from "next/navigation";
 import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
@@ -12,14 +9,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeftSquare, LogIn } from "lucide-react";
+import { ArrowLeftSquare, LogIn, LogOut, User } from "lucide-react";
 import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 const Navbar = () => {
   const path = usePathname();
   const router = useRouter();
-  const { theme, systemTheme } = useTheme();
-  const system = systemTheme === "dark" ? dark : undefined;
+  const { data: session, isPending } = useSession();
 
   const form = useForm<z.infer<typeof searchSchema>>({
     resolver: zodResolver(searchSchema),
@@ -41,12 +38,18 @@ const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("search")]);
 
-  const { user } = useUser();
-  let visitedUser = true;
+  const user = session?.user;
+  const visitedUser = !user;
 
-  if (user?.id) {
-    visitedUser = false;
-  }
+  const handleSignOut = async () => {
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
 
   return (
     <>
@@ -73,25 +76,38 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-2 items-center">
-        {visitedUser ? (
-          // <Link href="/auth/sign-in">
-          <Button className="flex gap-2 items-center" variant={"outline"}>
-            <LogIn />
-            <SignInButton mode="modal" fallbackRedirectUrl={path} />
-          </Button>
+        {visitedUser || isPending ? (
+          <Link href="/auth/sign-in">
+            <Button className="flex gap-2 items-center" variant={"outline"}>
+              <LogIn />
+              {isPending ? "Loading..." : "Sign In"}
+            </Button>
+          </Link>
         ) : (
-          // </Link>
-          <UserButton
-            afterSignOutUrl="/the-thank-you-page"
-            appearance={{
-              baseTheme:
-                theme === "dark"
-                  ? dark
-                  : theme === "system"
-                  ? system
-                  : undefined,
-            }}
-          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="rounded-full">
+                <User className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings" className="flex items-center gap-2">
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
 
         <ThemeSwitch />

@@ -9,8 +9,9 @@ import { FaCertificate } from "react-icons/fa";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const ProfilePage = async ({ params }: { params: { profileId: string } }) => {
-  if (!params.profileId) {
+const ProfilePage = async ({ params }: { params: Promise<{ profileId: string }> }) => {
+  const resolvedParams = await params;
+  if (!resolvedParams.profileId) {
     return (
       <div className="w-full h-[calc(100vh-100px)] flex justify-center items-center">
         <h1 className="text-2xl font-bold ">Profile Not Found</h1>
@@ -20,7 +21,7 @@ const ProfilePage = async ({ params }: { params: { profileId: string } }) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: params.profileId,
+      id: resolvedParams.profileId,
     },
     include: {
       courses: {

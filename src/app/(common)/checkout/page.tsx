@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { FaBook, FaGraduationCap, FaClock } from "react-icons/fa";
@@ -11,26 +11,19 @@ import EnrollmentForm from "./_components/EnrollmentForm";
 const CheckoutPage = async ({
   searchParams,
 }: {
-  searchParams: { courseId: string };
+  searchParams: Promise<{ courseId: string }>;
 }) => {
-  const { userId } = auth();
-  if (!userId) {
-    redirect("/");
-  }
+  const resolvedSearchParams = await searchParams;
+  const session = await auth.api.getSession({ headers: await import("next/headers").then(m=>m.headers()) });
+  const userId = session?.user?.id;
+  if (!userId) redirect("/");
 
-  const user = await prisma.user.findUnique({
-    where: {
-      authId: userId,
-    },
-  });
-
-  if (!user) {
-    redirect("/");
-  }
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) redirect("/");
 
   const course = await prisma.course.findUnique({
     where: {
-      id: searchParams.courseId,
+      id: resolvedSearchParams.courseId,
     },
     include: {
       _count: {
@@ -67,7 +60,7 @@ const CheckoutPage = async ({
     );
   }
 
-  const isAuthor = course.user.authId === userId;
+  const isAuthor = course.userId === userId;
 
   // Check if already enrolled
   const existingAccess = await prisma.access.findFirst({

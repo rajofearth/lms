@@ -1,11 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
 const funAuth = async () => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     return redirect("/");
   }

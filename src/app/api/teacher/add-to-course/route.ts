@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import generator from "generate-password-ts";
 
@@ -22,15 +23,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const { userId } = auth();
-
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
 
@@ -57,7 +61,6 @@ export async function POST(req: Request) {
         return {
           email,
           name: email.split("@")[0],
-          authId: email,
         };
       }),
       skipDuplicates: true,

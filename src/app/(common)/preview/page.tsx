@@ -1,14 +1,16 @@
 import { prisma } from "@/lib/db";
 import React from "react";
 import CoursePreviewPage from "./_components/CoursePreviewPage";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const Page = async ({
   searchParams,
 }: {
-  searchParams: { courseId: string };
+  searchParams: Promise<{ courseId: string }>;
 }) => {
-  const courseId = searchParams.courseId;
+  const resolvedSearchParams = await searchParams;
+  const courseId = resolvedSearchParams.courseId;
   if (!courseId) {
     return (
       <div className="flex justify-center items-center w-full h-full">
@@ -52,11 +54,12 @@ const Page = async ({
   let visitedUser = true;
   let isAuthor = false;
 
-  const { userId } = auth();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
   if (userId) {
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
 
@@ -71,7 +74,7 @@ const Page = async ({
       isEnrolled = !!access;
     }
     visitedUser = false;
-    isAuthor = course.user.authId === userId;
+    isAuthor = course.userId === userId;
   }
 
   return (

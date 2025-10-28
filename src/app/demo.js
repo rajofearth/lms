@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SignUpButton, useAuth } from "@clerk/nextjs";
+import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -96,7 +97,7 @@ const PricingCard = ({ title, price, features }) => (
 );
 
 export default function Home() {
-  const { isSignedIn } = useAuth();
+  const { data: session } = useSession();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -142,7 +143,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.5 }}
           >
-            {isSignedIn ? (
+            {session?.user ? (
               <Link
                 href="/dashboard"
                 className="bg-blue-500 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-600 transition duration-300"
@@ -150,12 +151,9 @@ export default function Home() {
                 Go to Dashboard
               </Link>
             ) : (
-              <SignUpButton mode="modal">
-                <button className="bg-blue-500 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-600 transition duration-300">
-                  Get Started{" "}
-                  <ArrowRightIcon className="inline-block ml-2 w-5 h-5" />
-                </button>
-              </SignUpButton>
+              <Link href="/auth/sign-in" className="bg-blue-500 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-600 transition duration-300">
+                Get Started <ArrowRightIcon className="inline-block ml-2 w-5 h-5" />
+              </Link>
             )}
           </motion.div>
         </div>

@@ -9,7 +9,8 @@ import {
   SearchSlash,
   Settings,
 } from "lucide-react";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/db";
 import SidebarItem from "./SidebarItem";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -92,33 +93,26 @@ const Sidebar = async () => {
     },
   ];
 
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   let isTeacher = false;
   let visitedUser = false;
 
   if (!userId) {
     visitedUser = true;
   } else {
-    const currentuser = await currentUser();
-    if (!currentuser) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    
+    if (!user) {
       visitedUser = true;
     } else {
-      if (!currentuser.primaryEmailAddress) {
-        return null;
-      }
-      const user = await prisma.user.upsert({
-        where: {
-          email: currentuser.primaryEmailAddress.emailAddress,
-        },
-        update: {
-          authId: userId,
-        },
-        create: {
-          authId: userId,
-          email: currentuser.primaryEmailAddress.emailAddress,
-          name: currentuser.fullName,
-        },
-      });
       if (user.role === "TEACHER") {
         isTeacher = true;
       }

@@ -3,22 +3,20 @@ import React from "react";
 import { DataTable } from "./_components/DataTable";
 import { columns } from "./_components/Column";
 import { getTeacherPublichedCourses } from "./actions";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import Loading from "@/components/Loading";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const page = async () => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
   if (!userId) {
     redirect("/");
   }
-  const user = await prisma.user.findUnique({
-    where: {
-      authId: userId,
-    },
-  });
+  const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) {
     redirect("/not-allowed");
   }

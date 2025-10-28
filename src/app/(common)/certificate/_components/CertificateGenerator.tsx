@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { useReactToPrint } from "react-to-print";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -158,9 +159,11 @@ const Certificate: React.FC<CertificateProps> = ({
             </div>
             <div className="flex justify-between items-baseline mb-10">
               <div>
-                <img
+                <Image
                   src={instructorSignature}
                   alt="Instructor Signature"
+                  width={128}
+                  height={64}
                   className="w-32 mx-auto mb-2"
                 />
                 <div className="w-48 border-t-2 border-black mx-auto"></div>
@@ -168,9 +171,11 @@ const Certificate: React.FC<CertificateProps> = ({
                 <p>Course Instructor</p>
               </div>
               <div>
-                <img
+                <Image
                   src={directorSignature}
                   alt="Director Signature"
+                  width={128}
+                  height={64}
                   className="w-32 mx-auto mb-2"
                 />
                 <div className="w-48 border-t-2 border-black mx-auto"></div>

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -7,7 +8,11 @@ export async function PUT(
   { params }: { params: { courseId: string; chapterId: string } }
 ) {
   try {
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -88,7 +93,11 @@ export async function DELETE(
       );
     }
 
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

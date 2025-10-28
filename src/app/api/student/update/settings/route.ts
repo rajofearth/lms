@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function PUT(req: Request, res: Response) {
@@ -10,7 +11,12 @@ export async function PUT(req: Request, res: Response) {
       { status: 400 }
     );
   }
-  const { userId } = auth();
+  
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -18,7 +24,7 @@ export async function PUT(req: Request, res: Response) {
   if (!roleChange) {
     user = await prisma.user.update({
       where: {
-        authId: userId,
+        id: userId,
       },
       data: {
         name,
@@ -34,7 +40,7 @@ export async function PUT(req: Request, res: Response) {
     }
     user = await prisma.user.update({
       where: {
-        authId: userId,
+        id: userId,
       },
       data: {
         name,

@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { Book, Users, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Chapter } from "@prisma/client";
@@ -114,11 +114,11 @@ const CoursePreviewPage = ({
               Continue Learning
             </Button>
           ) : visitedUser ? (
-            <SignInButton forceRedirectUrl={`/preview?courseId=${course.id}`}>
+            <Link href={`/auth/sign-in?redirect=${encodeURIComponent(`/preview?courseId=${course.id}`)}`}>
               <Button className="w-full mb-4 bg-foreground text-background hover:bg-foreground/90">
                 Login
               </Button>
-            </SignInButton>
+            </Link>
           ) : isAuthor ? (
             <Button
               className="w-full mb-4 bg-foreground text-background hover:bg-foreground/90"

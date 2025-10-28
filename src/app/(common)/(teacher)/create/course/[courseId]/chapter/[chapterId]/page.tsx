@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import TitleField from "./_components/TitleField";
@@ -13,9 +14,11 @@ import AttachmentsField from "./_components/AttachmentsField";
 const page = async ({
   params,
 }: {
-  params: { courseId: string; chapterId: string };
+  params: Promise<{ courseId: string; chapterId: string }>;
 }) => {
-  const { userId } = auth();
+  const resolvedParams = await params;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
 
   if (!userId) {
     redirect("/");
@@ -23,8 +26,8 @@ const page = async ({
 
   const chapterDeatils = await prisma.chapter.findUnique({
     where: {
-      id: params.chapterId,
-      courseId: params.courseId,
+      id: resolvedParams.chapterId,
+      courseId: resolvedParams.courseId,
     },
     include: {
       attachments: true,
@@ -45,7 +48,7 @@ const page = async ({
   return (
     <div className="w-full h-full overflow-y-auto">
       {!chapterDeatils.isPublished && <Banner isCourse={false} />}
-      <BackField courseId={params.courseId} />
+      <BackField courseId={resolvedParams.courseId} />
       <div className="p-3 w-full h-full space-y-4">
         <div className="mb-4 flex justify-between items-center">
           <div className="space-y-2 ">
@@ -57,21 +60,21 @@ const page = async ({
           <PublishField
             chapterDeatils={chapterDeatils}
             isCompleted={isAllFieldsFilled}
-            courseId={params.courseId}
-            chapterId={params.chapterId}
+            courseId={resolvedParams.courseId}
+            chapterId={resolvedParams.chapterId}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="space-y-4">
             <TitleField
               title={chapterDeatils.title}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
+              courseId={resolvedParams.courseId}
+              chapterId={resolvedParams.chapterId}
             />
 
             <VideoField
-              chapterId={params.chapterId}
-              courseId={params.courseId}
+              chapterId={resolvedParams.chapterId}
+              courseId={resolvedParams.courseId}
               videoUrl={chapterDeatils.videoUrl || ""}
               title={chapterDeatils.title}
             />
@@ -79,15 +82,15 @@ const page = async ({
           <div className="space-y-4 w-full">
             <AttachmentsField
               attachments={chapterDeatils.attachments || []}
-              courseId={params.courseId}
-              chapterId={params.chapterId}
+              courseId={resolvedParams.courseId}
+              chapterId={resolvedParams.chapterId}
             />
           </div>
         </div>
         <ContentField
           content={chapterDeatils.content || ""}
-          courseId={params.courseId}
-          chapterId={params.chapterId}
+          courseId={resolvedParams.courseId}
+          chapterId={resolvedParams.chapterId}
         />
       </div>
     </div>

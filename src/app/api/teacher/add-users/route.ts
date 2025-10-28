@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { render } from "@react-email/render";
@@ -16,15 +17,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const { userId } = auth();
-
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
 
@@ -42,7 +46,6 @@ export async function POST(req: Request) {
           role: "STUDENT",
           email,
           name: email.split("@")[0],
-          authId: email,
         };
       }),
       skipDuplicates: true,

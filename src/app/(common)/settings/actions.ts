@@ -1,20 +1,25 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { render } from "@react-email/render";
 import nodemailer from "nodemailer";
 import WelcomeToLMS from "../../../../emails/WelcomeToLMS";
 
 export const onboarding = async () => {
   try {
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return { message: "Unauthorized" };
     }
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
     if (!user) {

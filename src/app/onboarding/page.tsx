@@ -1,33 +1,31 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import OnboardingForm from "./_components/OnboardingForm";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 
 const OnboardingPage = async () => {
-  const user = await currentUser();
-
-  if (!user) {
-    redirect("auth/sign-in");
-  }
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user;
+  if (!user) redirect("/auth/sign-in");
 
   const data = await prisma.user.findUnique({
-    where: {
-      authId: user.id,
-    },
+    where: { id: user.id },
   });
   if (data) {
     if (data.onBoarded) {
       redirect("/dashboard");
     }
   } else {
-    await prisma.user.create({
+    // User record is managed by Better Auth via Prisma adapter.
+    // Ensure minimal profile fields exist.
+    await prisma.user.update({
+      where: { id: user.id },
       data: {
-        authId: user.id,
-        email: user.emailAddresses[0].emailAddress,
-        name: user.fullName || user.firstName,
-        profilePic: user.imageUrl,
+        name: user.name || user.email.split("@")[0],
+        image: user.image || undefined,
       },
-    });
+    }).catch(() => {});
   }
 
   const categories: string[] = [
@@ -67,7 +65,7 @@ const OnboardingPage = async () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
       <div className=" rounded-lg shadow-xl p-8 max-w-3xl w-full">
         <h1 className="text-4xl font-bold mb-6 text-center ">
-          Welcome to YourLMS, {user?.firstName}!
+          Welcome to YourLMS, {user?.name?.split(" ")[0] || user?.email}!
         </h1>
         <p className="text-lg mb-8 text-center text-gray-600">
           Let&apos;s personalize your learning journey. Tell us a bit about

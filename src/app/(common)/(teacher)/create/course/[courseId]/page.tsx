@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import TitleField from "./_components/TitleField";
@@ -11,14 +12,16 @@ import Banner from "@/components/Banner";
 import PublishField from "./_components/PublishField";
 import DurationField from "./_components/DurationField";
 
-const page = async ({ params }: { params: { courseId: string } }) => {
-  const { userId } = auth();
+const page = async ({ params }: { params: Promise<{ courseId: string }> }) => {
+  const resolvedParams = await params;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
   if (!userId) {
     redirect("/not-authorized");
   }
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
 
@@ -32,7 +35,7 @@ const page = async ({ params }: { params: { courseId: string } }) => {
 
   const courseDetails = await prisma.course.findUnique({
     where: {
-      id: params.courseId,
+      id: resolvedParams.courseId,
       userId: user.id,
     },
     include: {
@@ -84,7 +87,7 @@ const page = async ({ params }: { params: { courseId: string } }) => {
           <PublishField
             courseDeatils={courseDetails}
             isCompleted={isAllFieldsFilled}
-            courseId={params.courseId}
+            courseId={resolvedParams.courseId}
             user={user}
           />
         </div>
@@ -92,30 +95,30 @@ const page = async ({ params }: { params: { courseId: string } }) => {
           <div className="space-y-4">
             <TitleField
               title={courseDetails.title}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
             />
             <DescriptionField
               description={courseDetails.description || ""}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
             />
             <ThumbnailField
               thumbnail={courseDetails.thumbnail || ""}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
             />
             <CategoryField
               category={courseDetails.category?.title || ""}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
               availableCategories={allCategories}
             />
           </div>
           <div className="space-y-4">
             <ChaptersField
               chapters={courseDetails.chapters}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
             />
             <DurationField
               duration={courseDetails.duration}
-              courseId={params.courseId}
+              courseId={resolvedParams.courseId}
             />
           </div>
         </div>

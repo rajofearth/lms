@@ -15,7 +15,7 @@ import { BookCheck, GitPullRequestCreate, Phone } from "lucide-react";
 import { FaCertificate } from "react-icons/fa";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { Button } from "./ui/button";
-import { UserButton } from "@clerk/nextjs";
+import { useSession, signIn, signOut } from "@/lib/auth-client";
 import GroupButtons from "./GroupButtons";
 
 function SidebarWraper({

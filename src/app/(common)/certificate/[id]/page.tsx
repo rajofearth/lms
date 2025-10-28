@@ -1,13 +1,14 @@
 import { prisma } from "@/lib/db";
 import Certificate from "../_components/CertificateGenerator";
 
-const page = async ({ params }: { params: { id: string } }) => {
-  if (!params.id) {
+const page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const resolvedParams = await params;
+  if (!resolvedParams.id) {
     return (
       <div className="w-full h-full flex justify-center items-center">
         <h1>Invalid Certificate ID</h1>
         <p>
-          The certificate with the ID <strong>{params.id}</strong> was not
+          The certificate with the ID <strong>{resolvedParams.id}</strong> was not
           found.
         </p>
       </div>
@@ -15,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   }
   const certificateDetails = await prisma.certificate.findUnique({
     where: {
-      id: params.id,
+      id: resolvedParams.id,
     },
     include: {
       course: {
@@ -32,7 +33,7 @@ const page = async ({ params }: { params: { id: string } }) => {
       <div className="w-full h-full flex justify-center items-center">
         <h1>Certificate Not Found</h1>
         <p>
-          The certificate with the ID <strong>{params.id}</strong> was not
+          The certificate with the ID <strong>{resolvedParams.id}</strong> was not
           found.
         </p>
       </div>

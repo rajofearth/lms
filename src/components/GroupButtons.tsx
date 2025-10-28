@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { UserButton } from "@clerk/nextjs";
+import { useSession, signIn, signOut } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import { dark } from "@clerk/themes";
 
 const GroupButtons = ({ open }: { open: boolean }) => {
   const { theme } = useTheme();
+  const { data: session } = useSession();
   return (
     <div
       className={cn(
@@ -15,12 +15,15 @@ const GroupButtons = ({ open }: { open: boolean }) => {
         open && "flex-row"
       )}
     >
-      <UserButton
-        userProfileMode="modal"
-        appearance={{
-          baseTheme: theme === "dark" ? dark : undefined,
-        }}
-      />
+      {session?.user ? (
+        <button onClick={() => signOut()} className="px-3 py-2 rounded bg-neutral-800">
+          Sign out
+        </button>
+      ) : (
+        <button onClick={() => signIn.email({ email: "", password: "" })} className="px-3 py-2 rounded bg-neutral-800">
+          Sign in
+        </button>
+      )}
       <ThemeSwitch />
     </div>
   );

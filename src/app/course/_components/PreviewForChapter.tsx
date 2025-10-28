@@ -3,7 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import ChapterBanner from "./ChapterBanner";
 import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
 import Link from "next/link";
 import Preview from "@/components/Preview";
 import { cn, updateTheField } from "@/lib/utils";
@@ -75,8 +75,8 @@ const PreviewChapter = ({
               Mark as {isCompleted ? "Incomplete" : "Complete"}
             </Button>
           ) : visitedUser ? (
-            <Button>
-              <SignInButton forceRedirectUrl={path} mode="modal" />
+            <Button asChild>
+              <Link href={`/auth/sign-in?redirect=${encodeURIComponent(path)}`}>Sign In</Link>
             </Button>
           ) : (
             <Link href={`/checkout?courseId=${courseId}`}>

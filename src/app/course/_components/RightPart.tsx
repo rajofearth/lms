@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { fullChapterType, getChapterProgress, getFullChapter } from "../action";
 import PreviewForChapter from "./PreviewForChapter";
 import Loading from "@/components/Loading";
-import { SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -103,10 +103,8 @@ const RightPart = ({
             ) : (
               <div className="w-full h-[calc(100vh-90px)] flex flex-col gap-3 justify-center items-center font-bold text-xl">
                 You need to sign in to access this chapter
-                <Button>
-                  <SignInButton mode="modal" forceRedirectUrl={path}>
-                    Sign In
-                  </SignInButton>
+                <Button asChild>
+                  <Link href={`/auth/sign-in?redirect=${encodeURIComponent(path)}`}>Sign In</Link>
                 </Button>
               </div>
             )

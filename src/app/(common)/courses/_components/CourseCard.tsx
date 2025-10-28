@@ -26,7 +26,7 @@ const CourseCard = ({ course, chapterId }: CourseCardProps) => {
     getTotalCourseProgress(course.id).then((data) => {
       setValue(data);
     });
-  }, []);
+  }, [course.id]);
 
   return (
     <Link

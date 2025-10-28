@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { Role } from "@prisma/client";
 import { render } from "@react-email/render";
 import { redirect } from "next/navigation";
@@ -13,14 +14,18 @@ export const updateOnboarding = async (data: {
   bio: string;
   role: Role;
 }) => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     redirect("/");
   }
 
   const user = await prisma.user.update({
     where: {
-      authId: userId,
+      id: userId,
     },
     data: {
       onBoarded: true,

@@ -1,7 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { render } from "@react-email/render";
 import { redirect } from "next/navigation";
 import nodemailer from "nodemailer";
@@ -9,14 +10,18 @@ import CourseEnrollmentEmail from "../../../../emails/CourseEnrollmentEmail";
 
 export const enrollInCourse = async (courseId: string) => {
   try {
-    const { userId } = auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
+    
+    const userId = session?.user?.id;
     if (!userId) {
       return { success: false, error: "Unauthorized" };
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        authId: userId,
+        id: userId,
       },
     });
 

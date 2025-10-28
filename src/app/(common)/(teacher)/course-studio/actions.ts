@@ -1,17 +1,22 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const getTeacherPublichedCourses = async () => {
-  const { userId } = auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+  
+  const userId = session?.user?.id;
   if (!userId) {
     redirect("/");
   }
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
 

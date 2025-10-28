@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import { DataTable } from "../../_components/DataTable";
@@ -7,19 +8,21 @@ import { StudentsColumn } from "../_components/StudentsColumn";
 import { getStudentsForCourse } from "../actions";
 import { DataTableForStudents } from "../../_components/DataTableForStudents";
 
-const page = async ({ params }: { params: { courseId: string } }) => {
-  if (!params.courseId)
+const page = async ({ params }: { params: Promise<{ courseId: string }> }) => {
+  const resolvedParams = await params;
+  if (!resolvedParams.courseId)
     return <div className="text-2xl w-full mx-auto">Invalid Course Id</div>;
-  const { userId } = auth();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
   if (!userId) redirect("/");
   const user = await prisma.user.findUnique({
     where: {
-      authId: userId,
+      id: userId,
     },
   });
   if (!user) redirect("/not-allowed");
   if (user.role !== "TEACHER") redirect("/not-authenticated");
-  const courseId = params.courseId;
+  const courseId = resolvedParams.courseId;
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
