@@ -5,10 +5,11 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -43,7 +44,7 @@ export async function PATCH(
 
     const course = await prisma.course.findFirst({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
     });
@@ -71,7 +72,7 @@ export async function PATCH(
 
       await prisma.course.update({
         where: {
-          id: params.courseId,
+          id: courseId,
           userId: user.id,
         },
         data: {
@@ -81,7 +82,7 @@ export async function PATCH(
     } else {
       await prisma.course.update({
         where: {
-          id: params.courseId,
+          id: courseId,
           userId: user.id,
         },
         data: {
@@ -101,10 +102,11 @@ export async function PATCH(
 
 export async function PUT(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -139,7 +141,7 @@ export async function PUT(
 
     const course = await prisma.course.findFirst({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
     });
@@ -152,7 +154,7 @@ export async function PUT(
 
     const res = await prisma.course.update({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
       data: {
@@ -171,10 +173,11 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -202,7 +205,7 @@ export async function DELETE(
 
     const course = await prisma.course.findFirst({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
     });
@@ -215,7 +218,7 @@ export async function DELETE(
 
     await prisma.course.delete({
       where: {
-        id: params.courseId,
+        id: courseId,
       },
     });
 

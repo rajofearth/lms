@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function PUT(req: Request, res: Response) {
+export async function PUT(req: Request) {
   const { name, bio, roleChange, signature } = await req.json();
   if (!name || !bio) {
     return NextResponse.json(

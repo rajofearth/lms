@@ -5,10 +5,11 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -45,7 +46,7 @@ export async function PUT(
 
     const course = await prisma.course.findFirst({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
     });
@@ -58,7 +59,7 @@ export async function PUT(
 
     const access = await prisma.access.findFirst({
       where: {
-        courseId: params.courseId,
+        courseId: courseId,
         userId: id,
       },
     });

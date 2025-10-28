@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -6,6 +5,7 @@ import React from "react";
 import CourseCard from "./_components/CourseCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getUserCoursesWithProgress } from "../courses/actions";
 
 const page = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -20,29 +20,7 @@ const page = async () => {
       </div>
     );
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      accesses: {
-        include: {
-          course: {
-            include: {
-              _count: {
-                select: {
-                  chapters: {
-                    where: {
-                      isPublished: true,
-                    },
-                  },
-                },
-              },
-              user: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const user = await getUserCoursesWithProgress(userId);
   if (!user) redirect("/not-authorized");
   return (
     <div className="w-full min-h-[calc(100vh-100px)] p-4 space-y-3 overflow-y-auto">
@@ -68,11 +46,14 @@ const page = async () => {
         )
       }
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {user.accesses.map((access) => (
+        {user.accesses.map((course) => (
           <CourseCard
-            key={access.course.id}
-            course={access.course}
-            chapters={access.course._count.chapters}
+            key={course.id}
+            course={course}
+            chapters={course.chapters}
+            isAccessible={course.isAccessible}
+            progress={course.progress}
+            isAuthor={course.isAuthor}
           />
         ))}
       </div>

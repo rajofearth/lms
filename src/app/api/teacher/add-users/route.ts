@@ -62,18 +62,20 @@ export async function POST(req: Request) {
       },
     });
 
-    const sendAllEmails = emails.map((email) => {
+    const sendAllEmails = emails.map(async (email) => {
       const user = users.find((user) => user.email === email);
+      const htmlContent = await render(
+        WelcomeToLMS({
+          email,
+          studentFirstName: user?.name || "student",
+        })
+      );
+      
       return transport.sendMail({
         from: process.env.MAIL_USER,
         to: email,
         subject: "Welcome To LMS",
-        html: render(
-          WelcomeToLMS({
-            email,
-            studentFirstName: user?.name || "student",
-          })
-        ),
+        html: htmlContent,
       });
     });
     const data = await Promise.all(sendAllEmails);

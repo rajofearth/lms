@@ -98,11 +98,13 @@ export const enrollInCourse = async (courseId: string) => {
         name: user?.name || user.email.split("@")[0],
       };
 
+      const htmlContent = await render(CourseEnrollmentEmail({ ...emailDetails }));
+      
       const mailOptions = {
         from: process.env.MAIL_USER,
         to: user.email,
         subject: "Course Enrollment in YourLMS",
-        html: render(CourseEnrollmentEmail({ ...emailDetails })),
+        html: htmlContent,
       };
 
       transport.sendMail(mailOptions, function (error, info) {

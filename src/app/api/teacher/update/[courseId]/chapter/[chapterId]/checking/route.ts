@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -16,7 +16,9 @@ export async function PUT(
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!params.courseId || !params.chapterId) {
+    
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -32,8 +34,8 @@ export async function PUT(
     }
     const res = await prisma.chapter.update({
       where: {
-        id: params.chapterId,
-        courseId: params.courseId,
+        id: chapterId,
+        courseId: courseId,
       },
       data: {
         ...value,
@@ -42,7 +44,7 @@ export async function PUT(
 
     const course = await prisma.course.findUnique({
       where: {
-        id: params.courseId,
+        id: courseId,
       },
       select: {
         _count: {
@@ -60,7 +62,7 @@ export async function PUT(
     if (course!._count.chapters === 0) {
       await prisma.course.update({
         where: {
-          id: params.courseId,
+          id: courseId,
         },
         data: {
           isPublished: false,
@@ -83,10 +85,11 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
-    if (!params.courseId || !params.chapterId) {
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -104,14 +107,14 @@ export async function DELETE(
 
     const res = await prisma.chapter.delete({
       where: {
-        id: params.chapterId,
-        courseId: params.courseId,
+        id: chapterId,
+        courseId: courseId,
       },
     });
 
     const course = await prisma.course.findUnique({
       where: {
-        id: params.courseId,
+        id: courseId,
       },
       select: {
         _count: {
@@ -129,7 +132,7 @@ export async function DELETE(
     if (course!._count.chapters === 0) {
       await prisma.course.update({
         where: {
-          id: params.courseId,
+          id: courseId,
         },
         data: {
           isPublished: false,

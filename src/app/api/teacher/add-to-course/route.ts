@@ -74,17 +74,19 @@ export async function POST(req: Request) {
       },
     });
 
-    const welcomeEmails = newUsers.map((user) => {
+    const welcomeEmails = newUsers.map(async (user) => {
+      const htmlContent = await render(
+        WelcomeToLMS({
+          email: user.email,
+          studentFirstName: user?.name || "student",
+        })
+      );
+      
       return transport.sendMail({
         from: process.env.MAIL_USER,
         to: user.email,
         subject: "Welcome To LMS",
-        html: render(
-          WelcomeToLMS({
-            email: user.email,
-            studentFirstName: user?.name || "student",
-          })
-        ),
+        html: htmlContent,
       });
     });
 
@@ -112,20 +114,22 @@ export async function POST(req: Request) {
 
     const emails = allUsers.map((user) => user.email);
 
-    const enrollementMails = emails.map((email) => {
+    const enrollementMails = emails.map(async (email) => {
       const user = allUsers.find((user) => user.email === email);
+      const htmlContent = await render(
+        CourseEnrollmentEmail({
+          email,
+          courseName: course.title,
+          dashboardLink: `${process.env.BASE_URL}/dashboard`,
+          studentName: user?.name || "student",
+        })
+      );
+      
       return transport.sendMail({
         from: process.env.MAIL_USER,
         to: email,
         subject: "Course Enrolled",
-        html: render(
-          CourseEnrollmentEmail({
-            email,
-            courseName: course.title,
-            dashboardLink: `${process.env.BASE_URL}/dashboard`,
-            studentName: user?.name || "student",
-          })
-        ),
+        html: htmlContent,
       });
     });
     const data = await Promise.all(enrollementMails);

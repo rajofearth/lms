@@ -12,7 +12,7 @@ export const titleSchema = z.object({
 });
 
 export const durationSchema = z.object({
-  duration: z.coerce.number().min(1, {
+  duration: z.number().min(1, {
     message: "duration is too short",
   }),
 });
@@ -85,9 +85,7 @@ export const requestFormSchema = z.object({
     message: "Invalid email",
   }),
   phone: z
-    .string({
-      coerce: true,
-    })
+    .coerce.string()
     .regex(/^\d{10}$/, {
       message: "Invalid phone number",
     }),
