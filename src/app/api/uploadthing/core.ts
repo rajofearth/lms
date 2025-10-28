@@ -18,7 +18,7 @@ const funAuth = async () => {
 };
 
 export const ourFileRouter = {
-  uploadThumbnail: f({ image: { maxFileCount: 1 } })
+  uploadThumbnail: f({ image: { maxFileCount: 1 } }, { awaitServerData: false })
     .middleware(() => funAuth())
     .onUploadComplete(() => {}),
   uploadChapterVideo: f({

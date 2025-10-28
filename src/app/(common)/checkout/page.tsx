@@ -43,7 +43,6 @@ const CheckoutPage = async ({
       user: {
         select: {
           name: true,
-          authId: true,
         },
       },
     },

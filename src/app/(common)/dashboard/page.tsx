@@ -7,7 +7,7 @@ import CourseCard from "./_components/CourseCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const page = async ({ params }: { params: string }) => {
+const page = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
   if (!userId)

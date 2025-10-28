@@ -14,7 +14,6 @@ const Editor: React.FC<EditorProps> = ({ content, onChange }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   const { startUpload } = useUploadThing("uploadThumbnail", {
-    skipPolling: true,
     onUploadBegin: () => {
       toast.loading("uploading...", {
         id: "uploading-image",

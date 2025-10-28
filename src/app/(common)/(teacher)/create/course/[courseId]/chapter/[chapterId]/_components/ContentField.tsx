@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import Editor from "@/components/Editor";
-import Preview from "@/components/Preview";
+import dynamic from "next/dynamic";
+const Preview = dynamic(() => import("@/components/Preview"), { ssr: false });
 
 interface ContentFieldProps {
   content: string;

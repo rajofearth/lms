@@ -1,11 +1,14 @@
 "use client";
 import "react-quill/dist/quill.bubble.css";
-import ReactQuill from "react-quill";
 interface PreviewProps {
   content: string;
 }
 const Preview = ({ content }: PreviewProps) => {
-  return <ReactQuill theme="bubble" value={content} readOnly />;
+  return (
+    <div className="ql-container ql-bubble">
+      <div className="ql-editor" dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
+  );
 };
 
 export default Preview;

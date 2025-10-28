@@ -6,10 +6,11 @@ import { ClientUploadedFileData } from "uploadthing/types";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
-    if (!params.courseId || !params.chapterId) {
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -27,8 +28,8 @@ export async function DELETE(
 
     const res = await prisma.chapter.delete({
       where: {
-        id: params.chapterId,
-        courseId: params.courseId,
+        id: chapterId,
+        courseId: courseId,
       },
     });
 
@@ -46,7 +47,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
     const session = await auth.api.getSession({
@@ -57,7 +58,8 @@ export async function PATCH(
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!params.courseId || !params.chapterId) {
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -73,8 +75,8 @@ export async function PATCH(
     }
     const res = await prisma.chapter.update({
       where: {
-        id: params.chapterId,
-        courseId: params.courseId,
+        id: chapterId,
+        courseId: courseId,
       },
       data: {
         ...value,
@@ -96,10 +98,11 @@ export async function PATCH(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
-    if (!params.courseId || !params.chapterId) {
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -126,7 +129,7 @@ export async function POST(
     values.all.forEach(async (element: ClientUploadedFileData<null>) => {
       await prisma.attachment.create({
         data: {
-          chapterId: params.chapterId,
+          chapterId: chapterId,
           name: element.name || `Attachment-${index++}`,
           url: element.url,
           type: element.type || "file",
@@ -145,10 +148,11 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { courseId: string; chapterId: string } }
+  { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
   try {
-    if (!params.courseId || !params.chapterId) {
+    const { courseId, chapterId } = await params;
+    if (!courseId || !chapterId) {
       return NextResponse.json(
         { message: "CourseId and ChapterId are required" },
         { status: 400 }
@@ -175,7 +179,7 @@ export async function PUT(
     await prisma.attachment.delete({
       where: {
         id: values.id,
-        chapterId: params.chapterId,
+        chapterId: chapterId,
       },
     });
 

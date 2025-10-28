@@ -5,10 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -36,7 +37,7 @@ export async function POST(
 
     const course = await prisma.course.findUnique({
       where: {
-        id: params.courseId,
+        id: courseId,
         userId: user.id,
       },
       include: {
@@ -62,7 +63,7 @@ export async function POST(
     const chapter = await prisma.chapter.create({
       data: {
         title: value.title,
-        courseId: params.courseId,
+        courseId: courseId,
         order: course.chapters.length ? course.chapters.length + 1 : 1,
       },
     });
@@ -81,10 +82,11 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
-    if (!params.courseId) {
+    const { courseId } = await params;
+    if (!courseId) {
       return NextResponse.json(
         { message: "CourseId is required" },
         { status: 400 }
@@ -102,7 +104,7 @@ export async function PUT(
       await prisma.chapter.update({
         where: {
           id: value[i].id,
-          courseId: params.courseId,
+          courseId: courseId,
         },
         data: {
           order: value[i].order,
